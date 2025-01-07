@@ -38,21 +38,30 @@ const show = (req, res) => {
     }
 };
 
-// funzione (destroy)
+// funzione destroy per eliminare un posts dal database
 
 const destroy = (req, res) => {
     const id = parseInt(req.params.id);
-    const index = posts.findIndex(p => p.id === id); //trovo l'indice 
 
-    if(index !== -1) {
-        const deletedPosts = posts.splice(index, 1); // rimuovo il post degli array
-        console.log(`Posts ${id} elimniato . Lista aggiornata: ${posts}` );  
-        res.status(204).send();
-    } else {
-        console.log(`Posts con id ${id} non trovato`);
-        res.status(404).json({error: `Posts con id ${id} non trovato.`});
-    }
-}
+// Funzione (destroy) per eliminare un post dal database
+
+    // Eseguo la query per eliminare il post dal database
+    dataBase.query('DELETE FROM posts WHERE id = ?', [id], (err, result) => {
+        if (err) {
+            console.error('Errore nella query di eliminazione:', err);
+            return res.status(500).json({ error: 'Errore nell\'eliminazione del post' });
+        }
+
+        if (result.affectedRows === 0) {
+            // Se il numero di righe  è 0, significa che il post non esiste
+            return res.status(404).json({ error: `Post con id ${id} non trovato` });
+        }
+
+        // Se l'eliminazione è andata a buon fine, restituiamo il codice 204 (No Content)
+        console.log(`Post con id ${id} eliminato.`);
+        res.status(204).send(); 
+    });
+};
 
 // funzione (store per creare un nuovo post)
 const store = (req,res) => {
