@@ -1,13 +1,24 @@
-const posts = require('../data/postsData');
+const dataBase = require('../database');
 // const { post, param } = require('../routers/posts');
 
 
-// funzione (index)
+// Funzione Index per recuperare i post dal database
 const index = (req, res) => {
     console.log('Richiesta GET su /posts');
-    res.json({
-        count: posts.length,
-        posts: posts,
+
+       // Eseguo la query al database per ottenere tutti i post
+       dataBase.query('SELECT * FROM posts', (err, results) => {
+        if (err) {
+            console.error('Errore nella query:', err);
+            return res.status(500).json({ error: 'Errore nel recupero dei post' });
+        }
+
+        // Restituisco i post in formato JSON
+        res.status(200).json({
+            count: results.length,
+            posts: results, 
+        });
+        
     });
 };
 
