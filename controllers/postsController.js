@@ -24,18 +24,26 @@ const index = (req, res) => {
 
 // funzione (show)
 const show = (req, res) => {
-    const param = parseInt(req.params.id )  
-    const post = posts.find(p => p.id === param); // trovo il post che corrisponde 
 
-    if(post) {
-        console.log(`Richiesta GET su /posts/ ${param} (id) `); //monitoro la richiesta
-        res.json(post);
-    } 
+    // Funzione (show) per restituire un singolo post
 
-     else {
-        console.log(`Nessun post trovato con id: ${param}`);
-        res.status(404).json({ error: `Nessun post trovato con id: ${param}` });
-    }
+    const id = parseInt(req.params.id); // Ottengo l'ID del post dalla richiesta
+
+    // Eseguo la query per recuperare il post con l'ID specificato
+    dataBase.query('SELECT * FROM posts WHERE id = ?', [id], (err, result) => {
+        if (err) {
+            console.error('Errore nella query di recupero del post:', err);
+            return res.status(500).json({ error: 'Errore nel recupero del post' });
+        }
+
+        if (result.length === 0) {
+            // Se non trovo  il post, restituisco errore 404
+            return res.status(404).json({ error: `Post con id ${id} non trovato` });
+        }
+
+        // Se il post è trovato, restituisco in formato JSON
+        res.status(200).json(result[0]);
+    });
 };
 
 // funzione destroy per eliminare un posts dal database
