@@ -1,9 +1,14 @@
 // Configurazione base di express
 const express = require('express');
 const cors = require('cors');
+const dataBase = require('./database')
 
 const app = express();
 const PORT = 3000;
+
+app.listen(PORT, () => {
+    console.log(`Server in funzione su : ${PORT}`);
+  });
 
 // abilito cors
 app.use(cors());
@@ -31,8 +36,4 @@ app.use(express.static('public'));
 app.get('/', (req, res) => {
     console.log('Richiesta GET su /');
     res.send('Server del mio blog');
-});
-
-app.listen(PORT, () => {
-    console.log(`Server in funzione su : ${PORT} `);
 });
